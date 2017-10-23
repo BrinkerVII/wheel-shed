@@ -1,5 +1,6 @@
 import * as fsextra from 'fs-extra-promise';
 import * as debug from 'debug';
+import * as path from 'path';
 
 const d = debug('wheel-shed');
 
@@ -10,6 +11,8 @@ export class WheelShed {
 		this.initPath(this.basePath)
 			.then(() => {
 				d(`Base path initialized: ${this.basePath}`);
+				this.objectsDirectory = path.join(this.basePath, "objects");
+				
 				this.initPath(this.objectsDirectory)
 					.then(() => {
 						d(`Objects path initialized: ${this.basePath}`);

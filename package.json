@@ -4,7 +4,18 @@
   "description": "A simple data store thingymajig",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "gulp clean && gulp build-all",
+    "run-debug": "npm run build && better-npm-run run-debug",
+    "do-publish": "npm run build && npm publish"
+  },
+  "betterScripts": {
+    "run-debug": {
+      "command": "node ./dist/ftest/main.js",
+      "env": {
+        "DEBUG": "*"
+      }
+    }
   },
   "repository": {
     "type": "git",
@@ -21,6 +32,7 @@
     "@types/fs-extra-promise": "^1.0.2",
     "@types/node": "^8.0.46",
     "@types/uuid": "^3.4.3",
+    "better-npm-run": "^0.1.0",
     "gulp": "^3.9.1",
     "gulp-clean": "^0.3.2",
     "gulp-typescript": "^3.2.2",

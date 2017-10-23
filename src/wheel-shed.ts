@@ -1,6 +1,7 @@
 import * as fsextra from 'fs-extra-promise';
 import * as debug from 'debug';
 import * as path from 'path';
+import { Metadata } from './metadata';
 
 const d = debug('wheel-shed');
 
@@ -11,13 +12,15 @@ export class WheelShed {
 	private objectsDirectory: string;
 	private metaDataPath: string;
 
+	private metadata: Metadata;
+
 	constructor(private basePath: string) {
 		this.initPath(this.basePath)
 			.then(() => {
 				d(`Base path initialized: ${this.basePath}`);
 				this.objectsDirectory = path.join(this.basePath, OBJECTS_FOLDER);
 				this.metaDataPath = path.join(this.basePath, METADATA_FILENAME);
-
+				
 				this.initPath(this.objectsDirectory)
 					.then(() => {
 						d(`Objects path initialized: ${this.objectsDirectory}`);
@@ -26,10 +29,11 @@ export class WheelShed {
 						d(`Failed to initialize objects directory: ${this.objectsDirectory}`);
 						console.error(err);
 					});
-					
+
 				this.touchFile(this.metaDataPath)
 					.then(() => {
 						d(`Initialized metadata file: ${this.metaDataPath}`);
+						this.metadata = new Metadata(this.metaDataPath, true);
 					})
 					.catch(err => {
 						d(`Failed to initialize metadata file: ${this.metaDataPath}`);

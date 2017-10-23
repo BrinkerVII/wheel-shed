@@ -107,7 +107,7 @@ export class Metadata {
 				this.removeMetadataWithId(wheelMetadata.id);
 			}
 		} catch (e) {
-			console.warn(e);
+			// console.warn(e);
 		}
 
 		this.data.push(wheelMetadata);

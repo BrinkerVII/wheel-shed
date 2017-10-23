@@ -1,1 +1,5 @@
-console.log("Hello World");
+import { WheelShed } from "./wheel-shed";
+
+module.exports = {
+	WheelShed: WheelShed
+}

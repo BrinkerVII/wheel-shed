@@ -15,10 +15,10 @@ export class WheelShed {
 				
 				this.initPath(this.objectsDirectory)
 					.then(() => {
-						d(`Objects path initialized: ${this.basePath}`);
+						d(`Objects path initialized: ${this.objectsDirectory}`);
 					})
 					.catch(err => {
-						d(`Failed to initialize objects directory: ${this.basePath}`);
+						d(`Failed to initialize objects directory: ${this.objectsDirectory}`);
 						console.error(err);
 					})
 			})

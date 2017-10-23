@@ -15,5 +15,16 @@
   "bugs": {
     "url": "https://github.com/BrinkerVII/wheel-shed/issues"
   },
-  "homepage": "https://github.com/BrinkerVII/wheel-shed#readme"
+  "homepage": "https://github.com/BrinkerVII/wheel-shed#readme",
+  "devDependencies": {
+    "@types/node": "^8.0.46",
+    "@types/uuid": "^3.4.3",
+    "gulp": "^3.9.1",
+    "gulp-clean": "^0.3.2",
+    "gulp-typescript": "^3.2.2",
+    "typescript": "^2.5.3"
+  },
+  "dependencies": {
+    "uuid": "^3.1.0"
+  }
 }

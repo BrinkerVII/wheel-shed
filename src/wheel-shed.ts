@@ -9,6 +9,8 @@ const d = debug('wheel-shed');
 const OBJECTS_FOLDER = "objects";
 const METADATA_FILENAME = ".wheel-metadata.json";
 
+export type WheelFilter = (wheel: Wheel) => boolean;
+
 export class WheelShed {
 	private objectsDirectory: string;
 	private metaDataPath: string;
@@ -152,6 +154,24 @@ export class WheelShed {
 
 	public getObjectsDirectoryPath(): string {
 		return this.objectsDirectory;
+	}
+
+	public filter(filterFunction: WheelFilter): Promise<Wheel[]> {
+		let wheels: Wheel[] = [];
+
+		return new Promise<Wheel[]>((resolve, reject) => {
+			try {
+				for (let wheel of this.wheels) {
+					if (filterFunction(wheel)) {
+						wheels.push(wheel);
+					}
+				}
+			} catch (e) {
+				return reject(e);
+			}
+
+			resolve(wheels);
+		});
 	}
 
 	public ready(): Promise<void> {

@@ -11,6 +11,7 @@ export class Wheel {
 	private fspath: string = ".dead.wheel";
 	private buffer: Buffer = new Buffer(0);
 	private isReady: boolean = false;
+	private good = true;
 
 	private metadata: MetadataItem = {
 		id: uuid.v4(),
@@ -22,14 +23,21 @@ export class Wheel {
 	public constructor(private shed: WheelShed, initializeFile: boolean = true) {
 		this.updateFSPath();
 
+		let onError = (err) => {
+			console.error(err);
+			this.good = false;
+		}
+
 		if (initializeFile) {
 			let tryWrite = () => {
 				fsextra.writeFileAsync(this.fspath, "")
 					.then(() => {
 						d(`Initialized wheel file during init ${this.fspath}`);
-						this.isReady = true;
+						this.shed.addWheel(this, false)
+							.then(() => this.isReady = true)
+							.catch(onError);
 					})
-					.catch(console.error);
+					.catch(onError);
 			}
 
 			fsextra.existsAsync(this.fspath)
@@ -42,13 +50,13 @@ export class Wheel {
 				})
 				.catch(err => {
 					tryWrite();
-					console.error(err);
+					onError(err);
 				});
 		} else {
 			this.isReady = true;
 		}
 	}
-	
+
 	private updateFSPath() {
 		this.fspath = path.join(this.shed.getObjectsDirectoryPath(), this.metadata.id);
 	}
@@ -63,6 +71,10 @@ export class Wheel {
 
 	public getName(): string {
 		return this.metadata.name;
+	}
+
+	public isGood(): boolean {
+		return this.good;
 	}
 
 	public setName(name: string) {
@@ -142,6 +154,11 @@ export class Wheel {
 				if (this.isReady) {
 					clearInterval(timer);
 					resolve();
+				}
+
+				if (!this.good) {
+					clearInterval(timer);
+					reject(new Error("Object initialization failed"));
 				}
 			}, 10);
 		});

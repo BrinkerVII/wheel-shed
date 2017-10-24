@@ -118,7 +118,7 @@ export class WheelShed {
 		});
 	}
 
-	public addWheel(wheel: Wheel): Promise<void> {
+	public addWheel(wheel: Wheel, writeFile: boolean = true): Promise<void> {
 		this.wheels.push(wheel);
 		this.metadata.addWheel(wheel);
 
@@ -134,12 +134,16 @@ export class WheelShed {
 		return new Promise<void>((resolve, reject) => {
 			this.metadata.write()
 				.then(() => {
-					wheel.writeToFile()
-						.then(resolve)
-						.catch(err => {
-							spliceWheel();
-							reject(err);
-						});
+					if (writeFile) {
+						wheel.writeToFile()
+							.then(resolve)
+							.catch(err => {
+								spliceWheel();
+								reject(err);
+							});
+					} else {
+						resolve();
+					}
 				})
 				.catch(err => {
 					spliceWheel();

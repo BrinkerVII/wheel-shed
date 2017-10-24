@@ -29,7 +29,6 @@ export class Metadata {
 					try {
 						this.data = JSON.parse(content.toString());
 					} catch (e) {
-						console.warn(e);
 						this.data = [];
 					}
 

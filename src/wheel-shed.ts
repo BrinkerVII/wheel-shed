@@ -118,18 +118,18 @@ export class WheelShed {
 		});
 	}
 
+	private spliceWheel(wheel: Wheel) {
+		let index = this.wheels.indexOf(wheel);
+		if (index >= 0) {
+			this.wheels.splice(index);
+		}
+
+		this.metadata.removeWheel(wheel);
+	}
+
 	public addWheel(wheel: Wheel, writeFile: boolean = true): Promise<void> {
 		this.wheels.push(wheel);
 		this.metadata.addWheel(wheel);
-
-		let spliceWheel = () => {
-			let index = this.wheels.indexOf(wheel);
-			if (index >= 0) {
-				this.wheels.splice(index);
-			}
-
-			this.metadata.removeWheel(wheel);
-		}
 
 		return new Promise<void>((resolve, reject) => {
 			this.metadata.write()
@@ -138,7 +138,7 @@ export class WheelShed {
 						wheel.writeToFile()
 							.then(resolve)
 							.catch(err => {
-								spliceWheel();
+								this.spliceWheel(wheel);
 								reject(err);
 							});
 					} else {
@@ -146,9 +146,22 @@ export class WheelShed {
 					}
 				})
 				.catch(err => {
-					spliceWheel();
+					this.spliceWheel(wheel);
 					reject(err);
 				});
+		});
+	}
+
+	public removeWheel(wheel: Wheel): Promise<void> {
+		return new Promise<void>((resolve, reject) => {
+			wheel.removeFile()
+				.then(() => {
+					this.spliceWheel(wheel);
+					this.metadata.write()
+						.then(resolve)
+						.catch(reject);
+				})
+				.catch(reject);
 		});
 	}
 

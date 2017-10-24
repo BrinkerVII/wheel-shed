@@ -120,6 +120,22 @@ export class Wheel {
 		});
 	}
 
+	public removeFile(): Promise<void> {
+		return new Promise<void>((resolve, reject) => {
+			fsextra.removeAsync(this.fspath)
+				.then(() => {
+					this.good = false;
+					this.buffer = new Buffer(0);
+					resolve();
+				})
+				.catch(reject);
+		});
+	}
+
+	public remove(): Promise<void> {
+		return this.shed.removeWheel(this);
+	}
+
 	public getContent(): Promise<string> {
 		return new Promise<string>((resolve, reject) => {
 			this.readFromFile()

@@ -20,7 +20,7 @@ export class Wheel {
 	};
 
 	public constructor(private shed: WheelShed, initializeFile: boolean = true) {
-		this.fspath = path.join(this.shed.getObjectsDirectoryPath(), this.metadata.id);
+		this.updateFSPath();
 
 		if (initializeFile) {
 			let tryWrite = () => {
@@ -48,6 +48,10 @@ export class Wheel {
 			this.isReady = true;
 		}
 	}
+	
+	private updateFSPath() {
+		this.fspath = path.join(this.shed.getObjectsDirectoryPath(), this.metadata.id);
+	}
 
 	private updateModifiedTime() {
 		this.metadata.modified = (new Date()).getTime();
@@ -68,6 +72,7 @@ export class Wheel {
 
 	private setMetadata(metadata: MetadataItem) {
 		this.metadata = metadata
+		this.updateFSPath();
 	}
 
 	public getMetadata(): MetadataItem {
@@ -92,12 +97,37 @@ export class Wheel {
 		});
 	}
 
-	public readFromFile(): Promise<void> {
+	private readFromFile(): Promise<void> {
 		return new Promise<void>((resolve, reject) => {
 			fsextra.readFileAsync(this.fspath)
 				.then(content => {
 					this.buffer = new Buffer(content);
+					resolve();
 				})
+				.catch(reject);
+		});
+	}
+
+	public getContent(): Promise<string> {
+		return new Promise<string>((resolve, reject) => {
+			this.readFromFile()
+				.then(() => {
+					try {
+						let content: string = this.buffer.toString();
+						resolve(content);
+					} catch (e) {
+						reject(e);
+					}
+				})
+				.catch(reject);
+		});
+	}
+
+	public setContent(content: string): Promise<void> {
+		return new Promise<void>((resolve, reject) => {
+			this.buffer = new Buffer(content);
+			this.writeToFile()
+				.then(resolve)
 				.catch(reject);
 		});
 	}

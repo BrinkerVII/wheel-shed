@@ -5,5 +5,6 @@ export interface MetadataItem {
 	created: number;
 	modified: number
 	name: string;
-	contentType: ContentType
+	contentType: ContentType,
+	tags: string[]
 }

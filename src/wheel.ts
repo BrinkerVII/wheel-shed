@@ -19,7 +19,8 @@ export class Wheel {
 		created: (new Date()).getTime(),
 		modified: (new Date()).getTime(),
 		name: "New Object",
-		contentType: ContentType.PlainText
+		contentType: ContentType.PlainText,
+		tags: []
 	};
 
 	public constructor(protected shed: WheelShed, initializeFile: boolean = true) {
@@ -82,6 +83,32 @@ export class Wheel {
 	public setName(name: string) {
 		this.metadata.name = name;
 		this.updateModifiedTime();
+	}
+
+	private normalizeTag(tag: string) {
+		return tag.toLowerCase();
+	}
+
+	public hasTag(tag: string): boolean {
+		return this.metadata.tags.indexOf(this.normalizeTag(tag)) >= 0;
+	}
+
+	public addTag(tag: string) {
+		let normalizedTag = this.normalizeTag(tag);
+		if (!this.hasTag(tag)) {
+			this.metadata.tags.push(tag);
+		}
+	}
+
+	public removeTag(tag: string) {
+		let normalizedTag = this.normalizeTag(tag);
+		if (this.hasTag(tag)) {
+			let index = this.metadata.tags.indexOf(tag);
+			if (index >= 0) {
+				this.metadata.tags.splice(index);
+				this.removeTag(tag);
+			}
+		}
 	}
 
 	protected setMetadata(metadata: MetadataItem) {

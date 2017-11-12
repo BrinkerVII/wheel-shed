@@ -54,6 +54,10 @@ export class Metadata {
 			if (typeof metadataItem.contentType !== "number") {
 				metadataItem.contentType = ContentType.PlainText;
 			}
+			
+			if (!metadataItem.tags) {
+				metadataItem.tags = [];
+			}
 
 			switch (metadataItem.contentType) {
 				case ContentType.PlainText:

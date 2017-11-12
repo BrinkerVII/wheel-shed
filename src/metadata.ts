@@ -3,6 +3,8 @@ import * as fsextra from 'fs-extra-promise';
 import * as debug from 'debug';
 import { Wheel } from "./wheel";
 import { WheelShed } from "./wheel-shed";
+import { ContentType } from "./content-type";
+import { JSONWheel } from "./json-wheel";
 
 const d = debug("metadata");
 
@@ -49,7 +51,21 @@ export class Metadata {
 	public getWheels(shedThatsLoadingTheData: WheelShed): Wheel[] {
 		let wheels = [];
 		for (let metadataItem of this.data) {
-			wheels.push(Wheel.withMetadata(shedThatsLoadingTheData, metadataItem));
+			if (typeof metadataItem.contentType !== "number") {
+				metadataItem.contentType = ContentType.PlainText;
+			}
+
+			switch (metadataItem.contentType) {
+				case ContentType.PlainText:
+					wheels.push(Wheel.withMetadata(shedThatsLoadingTheData, metadataItem));
+					break;
+				case ContentType.JSON:
+					wheels.push(JSONWheel.withMetadata(shedThatsLoadingTheData, metadataItem));
+					break;
+				default:
+					wheels.push(Wheel.withMetadata(shedThatsLoadingTheData, metadataItem));
+					break;
+			}
 		}
 
 		return wheels;
@@ -92,7 +108,7 @@ export class Metadata {
 
 		return false;
 	}
-	
+
 	public removeWheel(wheel: Wheel) {
 		this.removeMetadataWithId(wheel.getId());
 	}
@@ -110,5 +126,11 @@ export class Metadata {
 		}
 
 		this.data.push(wheelMetadata);
+	}
+	
+	public fromWheels(wheels: Wheel[]) {
+		for (let wheel of wheels) {
+		    this.addWheel(wheel);
+		}
 	}
 }

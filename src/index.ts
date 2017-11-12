@@ -1,11 +1,5 @@
-import { WheelShed } from "./wheel-shed";
-import { Wheel } from "./wheel";
-import { Metadata } from "./metadata";
-import { JSONWheel } from "./json-wheel";
-
-module.exports = {
-	WheelShed: WheelShed,
-	Wheel: Wheel,
-	JSONWheel: JSONWheel,
-	Metadata: Metadata
-}
+export { WheelShed } from "./wheel-shed";
+export { Wheel } from "./wheel";
+export { Metadata } from "./metadata";
+export { JSONWheel } from "./json-wheel";
+export { ContentType } from './content-type';

@@ -166,6 +166,7 @@ export class WheelShed {
 	}
 
 	public writeMetadata(): Promise<void> {
+		this.metadata.fromWheels(this.wheels);
 		return this.metadata.write();
 	}
 
@@ -208,5 +209,9 @@ export class WheelShed {
 				}
 			}, 10)
 		});
+	}
+	
+	public close(): Promise<void> {
+		return this.writeMetadata();
 	}
 }

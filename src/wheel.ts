@@ -4,6 +4,7 @@ import * as path from 'path';
 import * as debug from 'debug';
 import { MetadataItem } from './metadata-item';
 import { WheelShed } from './wheel-shed';
+import { ContentType } from './content-type';
 
 const d = debug("wheel");
 
@@ -13,14 +14,15 @@ export class Wheel {
 	private isReady: boolean = false;
 	private good = true;
 
-	private metadata: MetadataItem = {
+	protected metadata: MetadataItem = {
 		id: uuid.v4(),
 		created: (new Date()).getTime(),
 		modified: (new Date()).getTime(),
-		name: "New Object"
+		name: "New Object",
+		contentType: ContentType.PlainText
 	};
 
-	public constructor(private shed: WheelShed, initializeFile: boolean = true) {
+	public constructor(protected shed: WheelShed, initializeFile: boolean = true) {
 		this.updateFSPath();
 
 		let onError = (err) => {
@@ -82,7 +84,7 @@ export class Wheel {
 		this.updateModifiedTime();
 	}
 
-	private setMetadata(metadata: MetadataItem) {
+	protected setMetadata(metadata: MetadataItem) {
 		this.metadata = metadata
 		this.updateFSPath();
 	}

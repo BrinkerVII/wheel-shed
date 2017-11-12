@@ -1,7 +1,15 @@
 import { Wheel } from "./wheel";
+import { WheelShed } from "./wheel-shed";
+import { MetadataItem } from "./metadata-item";
+import { ContentType } from "./content-type";
 
 export class JSONWheel extends Wheel {
-	getContet(): Promise<any> {
+	public constructor(protected shed: WheelShed, initializeFile: boolean = true) {
+		super(shed, initializeFile);
+		this.metadata.contentType = ContentType.JSON;
+	}
+	
+	getContent(): Promise<any> {
 		return new Promise((resolve, reject) => {
 			super.getContent()
 				.then(contentString => {
@@ -25,5 +33,11 @@ export class JSONWheel extends Wheel {
 				reject(new Error(e));
 			}
 		});
+	}
+	
+	public static withMetadata(shed: WheelShed, metadata: MetadataItem) {
+		let wheel = new JSONWheel(shed, false);
+		wheel.setMetadata(metadata);
+		return wheel;
 	}
 }

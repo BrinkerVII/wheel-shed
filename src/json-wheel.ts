@@ -8,15 +8,19 @@ export class JSONWheel extends Wheel {
 		super(shed, initializeFile);
 		this.metadata.contentType = ContentType.JSON;
 	}
-	
-	getContent(): Promise<any> {
+
+	getContent(defaultObject: any = []): Promise<any> {
 		return new Promise((resolve, reject) => {
 			super.getContent()
 				.then(contentString => {
 					try {
 						resolve(JSON.parse(contentString));
 					} catch (e) {
-						reject(new Error(e));
+						if (e.toString().contains("Unexpected end of JSON input")) {
+							resolve(defaultObject);
+						} else {
+							reject(new Error(e));
+						}
 					}
 				})
 				.catch(reject);
@@ -34,7 +38,7 @@ export class JSONWheel extends Wheel {
 			}
 		});
 	}
-	
+
 	public static withMetadata(shed: WheelShed, metadata: MetadataItem) {
 		let wheel = new JSONWheel(shed, false);
 		wheel.setMetadata(metadata);

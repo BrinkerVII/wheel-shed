@@ -16,7 +16,7 @@ export class JSONWheel extends Wheel {
 					try {
 						resolve(JSON.parse(contentString));
 					} catch (e) {
-						if (e.toString().contains("Unexpected end of JSON input")) {
+						if (e.toString().indexOf("Unexpected end of JSON input") >= 0) {
 							resolve(defaultObject);
 						} else {
 							reject(new Error(e));

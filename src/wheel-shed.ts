@@ -24,7 +24,7 @@ export class WheelShed {
 	constructor(private basePath: string) {
 		this.objectsDirectory = path.join(this.basePath, OBJECTS_FOLDER);
 		this.metaDataPath = path.join(this.basePath, METADATA_FILENAME);
-		
+
 		this.initPath(this.basePath)
 			.then(() => {
 				d(`Base path initialized: ${this.basePath}`);
@@ -169,8 +169,14 @@ export class WheelShed {
 	}
 
 	public writeMetadata(): Promise<void> {
-		this.metadata.fromWheels(this.wheels);
-		return this.metadata.write();
+		if (this.metadata) {
+			this.metadata.fromWheels(this.wheels);
+			return this.metadata.write();
+		} else {
+			return new Promise<void>((resolve, reject) => {
+				resolve();
+			});
+		}
 	}
 
 	public getObjectsDirectoryPath(): string {

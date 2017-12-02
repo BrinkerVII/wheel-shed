@@ -3,6 +3,8 @@ import * as debug from 'debug';
 import * as path from 'path';
 import { Metadata } from './metadata';
 import { Wheel } from './wheel';
+import { ContentType } from './content-type';
+import { JSONWheel } from './json-wheel';
 
 const d = debug('wheel-shed');
 
@@ -192,6 +194,68 @@ export class WheelShed {
 		});
 	}
 
+	private initWheel(wheelName: string, contentType: ContentType): Promise<Wheel> {
+		let wheel: Wheel = null;
+
+		return new Promise<Wheel>((resolve, reject) => {
+			let finishInit = () => {
+				wheel.setName(wheelName);
+				wheel.writeToFile()
+					.then(() => resolve(wheel))
+					.catch(reject);
+			}
+
+			switch (contentType) {
+				case ContentType.PlainText:
+					wheel = new Wheel(this, false);
+					wheel.ready()
+						.then(() => {
+							finishInit();
+						})
+						.catch(reject);
+					return;
+				case ContentType.JSON:
+					wheel = new JSONWheel(this, false);
+					wheel.ready()
+						.then(() => {
+							finishInit();
+						})
+						.catch(reject);
+					return;
+				default:
+					return reject(new Error("Unsupported ContentType"));
+			}
+		});
+	}
+
+	public ensureWheelWithName<T>(wheelName: string, contentType: ContentType = ContentType.PlainText): Promise<T> {
+		return new Promise<T>((resolve, reject) => {
+			this.filter(wheel => wheel.getName() === wheelName)
+				.then(wheels => {
+					let wheel = wheels[0];
+
+					let doWheelInit = () => {
+						this.initWheel(wheelName, contentType)
+							.then(wheel => resolve(<any>wheel))
+							.catch(reject);
+					}
+
+					if (wheel) {
+						if (wheel.getMetadata().contentType !== ContentType.JSON) {
+							return doWheelInit();
+						}
+					} else {
+						return doWheelInit();
+					}
+
+					wheel.ready()
+						.then(() => resolve(<any>wheel))
+						.catch(reject);
+				})
+				.catch(reject);
+		});
+	}
+
 	public ready(): Promise<void> {
 		return new Promise<void>((resolve, reject) => {
 			let readyCondition = (): boolean => {
@@ -210,7 +274,7 @@ export class WheelShed {
 			}, 10)
 		});
 	}
-	
+
 	public close(): Promise<void> {
 		return this.writeMetadata();
 	}

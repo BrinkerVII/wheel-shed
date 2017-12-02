@@ -61,6 +61,7 @@ export class Wheel {
 	}
 
 	private updateFSPath() {
+		d(`updateFSPath :: ${this.shed.getObjectsDirectoryPath()} :: ${this.metadata.id}`);
 		this.fspath = path.join(this.shed.getObjectsDirectoryPath(), this.metadata.id);
 	}
 

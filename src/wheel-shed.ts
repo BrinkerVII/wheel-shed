@@ -22,12 +22,13 @@ export class WheelShed {
 	private readyState: number = 0;
 
 	constructor(private basePath: string) {
+		this.objectsDirectory = path.join(this.basePath, OBJECTS_FOLDER);
+		this.metaDataPath = path.join(this.basePath, METADATA_FILENAME);
+		
 		this.initPath(this.basePath)
 			.then(() => {
 				d(`Base path initialized: ${this.basePath}`);
 				this.readyState++;
-				this.objectsDirectory = path.join(this.basePath, OBJECTS_FOLDER);
-				this.metaDataPath = path.join(this.basePath, METADATA_FILENAME);
 
 				this.initPath(this.objectsDirectory)
 					.then(() => {

@@ -1,6 +1,6 @@
 {
   "name": "wheel-shed",
-  "version": "0.8.4",
+  "version": "0.8.5",
   "description": "A simple data store thingymajig",
   "main": "index.js",
   "scripts": {
